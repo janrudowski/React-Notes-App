@@ -99,10 +99,6 @@ function init() {
 
 export default function Notes() {
   const navigation = useNavigate();
-  const [sideBarVisibility, setSideBarVisibility] = React.useState({
-    isVisible: true,
-    ratio: [20, 80],
-  });
   const [notes, dispatch] = React.useReducer(reducer, {}, init);
   React.useEffect(() => {
     localStorage.setItem('notes', JSON.stringify(notes.items));
@@ -137,13 +133,11 @@ export default function Notes() {
     <main>
       <Split
         className='split'
-        sizes={sideBarVisibility.ratio}
+        sizes={[20, 80]}
         cursor='col-resize'
         gutterSize={2}
       >
-        {sideBarVisibility.isVisible && (
-          <Sidebar dispatch={dispatch} notes={notes} />
-        )}
+        <Sidebar dispatch={dispatch} notes={notes} />
         <Editor notes={notes} dispatch={dispatch} />
       </Split>
     </main>

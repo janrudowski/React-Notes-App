@@ -1,6 +1,9 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { NavContext } from './Context';
+
 export default function Nav() {
+  const { notesVisible, setNotesVisible } = React.useContext(NavContext);
   return (
     <header>
       <div className='flex-header'>
@@ -21,6 +24,12 @@ export default function Nav() {
           </ul>
         </nav>
       </div>
+      <button
+        className={`hide-notes-button ${notesVisible ? '' : 'show-notes'}`}
+        onClick={() => setNotesVisible(!notesVisible)}
+      >
+        <img src='/images/chevron.svg' />
+      </button>
     </header>
   );
 }

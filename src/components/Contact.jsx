@@ -52,7 +52,9 @@ export default function Contact() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    let correct = Object.values(errorMessages).every((el) => !el.display);
+    let correct = Object.values(errorMessages).every(
+      (el) => el.display === true
+    );
     let message = correct ? 'Success.' : 'Empty fields or invalid input.';
     let color = correct ? '#92d050' : '#dc3545';
     setSubmitMessage((prev) => {

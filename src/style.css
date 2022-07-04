@@ -57,6 +57,7 @@ header {
   background: #f6f6f6;
   width: 15%;
   height: 100vh;
+  position: relative;
 }
 
 main {
@@ -110,6 +111,30 @@ nav a:hover {
 nav a.active {
   color: #303030;
   border-left: 3px solid #ec7160;
+}
+
+.hide-notes-button {
+  position: absolute;
+  left: 92%;
+  top: 5%;
+  border: none;
+  background: #fff;
+  width: 2em;
+  height: 2em;
+  border-radius: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 300ms ease-in-out;
+}
+
+.show-notes {
+  transform: rotate(180deg);
+}
+
+.hide-notes-button img {
+  width: 50%;
 }
 
 /* home section */
@@ -421,30 +446,19 @@ form {
   display: block;
 }
 
-.hide-sidebar-button {
-  position: relative;
-  bottom: 5em;
-  left: 0;
-  width: 3em;
-  height: 3em;
-  border: 1px solid #e7e7e9;
-  border-radius: 2em;
-  background: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hide-sidebar-button {
-  width: 2em;
-  height: 2em;
-}
-
 .sidebar-note-delete {
   width: 1em;
   position: absolute;
   right: 0.5em;
   top: 40%;
   z-index: 10;
+  display: none;
+}
+
+.sidebar-note:hover .sidebar-note-delete {
+  display: block;
+}
+
+.hide-sidebar {
+  display: none;
 }

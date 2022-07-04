@@ -28,19 +28,19 @@ export default function Contact() {
   const [errorMessages, setErrorMessages] = React.useState({
     name: {
       message: 'Name cannot be empty or contain non-letter characters.',
-      correct: null,
+      display: null,
     },
     email: {
       message: 'Invalid Email.',
-      correct: null,
+      display: null,
     },
     title: {
       message: 'Title cannot be empty.',
-      correct: null,
+      display: null,
     },
     message: {
       message: 'Message cannot be empty.',
-      correct: null,
+      display: null,
     },
   });
 
@@ -52,7 +52,7 @@ export default function Contact() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    let correct = Object.values(errorMessages).every((el) => el.correct);
+    let correct = Object.values(errorMessages).every((el) => !el.display);
     let message = correct ? 'Success.' : 'Empty fields or invalid input.';
     let color = correct ? '#92d050' : '#dc3545';
     setSubmitMessage((prev) => {
@@ -98,7 +98,7 @@ export default function Contact() {
           ...prev,
           [key]: {
             ...prev[key],
-            correct: valid,
+            display: !valid,
           },
         };
       });
@@ -113,9 +113,7 @@ export default function Contact() {
           <div className='input-group'>
             <label htmlFor='name'>Name*</label>
             <input
-              className={
-                errorMessages.name.correct === false ? 'invalid-input' : ''
-              }
+              className={errorMessages.name.display ? 'invalid-input' : ''}
               onChange={handleChange}
               value={formData.name.value}
               type='text'
@@ -124,16 +122,13 @@ export default function Contact() {
             />
 
             <h6 className='contact-error-message'>
-              {errorMessages.name.correct === false &&
-                errorMessages.name.message}
+              {errorMessages.name.display && errorMessages.name.message}
             </h6>
           </div>
           <div className='input-group'>
             <label htmlFor='email'>Email*</label>
             <input
-              className={
-                errorMessages.email.correct === false ? 'invalid-input' : ''
-              }
+              className={errorMessages.email.display ? 'invalid-input' : ''}
               onChange={handleChange}
               value={formData.email.value}
               type='text'
@@ -142,16 +137,13 @@ export default function Contact() {
             />
 
             <h6 className='contact-error-message'>
-              {errorMessages.email.correct === false &&
-                errorMessages.email.message}
+              {errorMessages.email.display && errorMessages.email.message}
             </h6>
           </div>
           <div className='input-group span-two'>
             <label htmlFor='title'>Title</label>
             <input
-              className={
-                errorMessages.title.correct === false ? 'invalid-input' : ''
-              }
+              className={errorMessages.title.display ? 'invalid-input' : ''}
               onChange={handleChange}
               value={formData.title.value}
               type='text'
@@ -160,15 +152,14 @@ export default function Contact() {
             />
 
             <h6 className='contact-error-message'>
-              {errorMessages.title.correct === false &&
-                errorMessages.title.message}
+              {errorMessages.title.display && errorMessages.title.message}
             </h6>
           </div>
           <div className='input-group span-two'>
             <label htmlFor='message'>Your message</label>
             <textarea
               className={`message ${
-                errorMessages.message.correct === false ? 'invalid-input' : ''
+                errorMessages.message.display ? 'invalid-input' : ''
               }`}
               onChange={handleChange}
               value={formData.message.value}
@@ -177,8 +168,7 @@ export default function Contact() {
             />
 
             <h6 className='contact-error-message'>
-              {errorMessages.message.correct === false &&
-                errorMessages.message.message}
+              {errorMessages.message.display && errorMessages.message.message}
             </h6>
           </div>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatDate } from './Notes';
+import Nav from './Nav';
 
 export default function Contact() {
   const [formData, setFormData] = React.useState({
@@ -10,6 +10,7 @@ export default function Contact() {
     },
     email: {
       value: '',
+      //eslint-disable-next-line
       regex: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
       active: false,
     },
@@ -53,7 +54,7 @@ export default function Contact() {
   function handleSubmit(e) {
     e.preventDefault();
     let correct = Object.values(errorMessages).every(
-      (el) => el.display === true
+      (el) => el.display == false
     );
     let message = correct ? 'Success.' : 'Empty fields or invalid input.';
     let color = correct ? '#92d050' : '#dc3545';
@@ -108,83 +109,86 @@ export default function Contact() {
   }, [formData]);
 
   return (
-    <main>
-      <div className='flex-main flex-contact'>
-        <form onSubmit={handleSubmit}>
-          <h4 className='contact-title span-two'>Contact</h4>
-          <div className='input-group'>
-            <label htmlFor='name'>Name*</label>
-            <input
-              className={errorMessages.name.display ? 'invalid-input' : ''}
-              onChange={handleChange}
-              value={formData.name.value}
-              type='text'
-              name='name'
-              id='name'
-            />
+    <>
+      <Nav />
+      <main>
+        <div className='flex-main flex-contact'>
+          <form onSubmit={handleSubmit}>
+            <h4 className='contact-title span-two'>Contact</h4>
+            <div className='input-group'>
+              <label htmlFor='name'>Name*</label>
+              <input
+                className={errorMessages.name.display ? 'invalid-input' : ''}
+                onChange={handleChange}
+                value={formData.name.value}
+                type='text'
+                name='name'
+                id='name'
+              />
 
-            <h6 className='contact-error-message'>
-              {errorMessages.name.display && errorMessages.name.message}
-            </h6>
-          </div>
-          <div className='input-group'>
-            <label htmlFor='email'>Email*</label>
-            <input
-              className={errorMessages.email.display ? 'invalid-input' : ''}
-              onChange={handleChange}
-              value={formData.email.value}
-              type='text'
-              name='email'
-              id='email'
-            />
+              <h6 className='contact-error-message'>
+                {errorMessages.name.display && errorMessages.name.message}
+              </h6>
+            </div>
+            <div className='input-group'>
+              <label htmlFor='email'>Email*</label>
+              <input
+                className={errorMessages.email.display ? 'invalid-input' : ''}
+                onChange={handleChange}
+                value={formData.email.value}
+                type='text'
+                name='email'
+                id='email'
+              />
 
-            <h6 className='contact-error-message'>
-              {errorMessages.email.display && errorMessages.email.message}
-            </h6>
-          </div>
-          <div className='input-group span-two'>
-            <label htmlFor='title'>Title</label>
-            <input
-              className={errorMessages.title.display ? 'invalid-input' : ''}
-              onChange={handleChange}
-              value={formData.title.value}
-              type='text'
-              name='title'
-              id='title'
-            />
+              <h6 className='contact-error-message'>
+                {errorMessages.email.display && errorMessages.email.message}
+              </h6>
+            </div>
+            <div className='input-group span-two'>
+              <label htmlFor='title'>Title</label>
+              <input
+                className={errorMessages.title.display ? 'invalid-input' : ''}
+                onChange={handleChange}
+                value={formData.title.value}
+                type='text'
+                name='title'
+                id='title'
+              />
 
-            <h6 className='contact-error-message'>
-              {errorMessages.title.display && errorMessages.title.message}
-            </h6>
-          </div>
-          <div className='input-group span-two'>
-            <label htmlFor='message'>Your message</label>
-            <textarea
-              className={`message ${
-                errorMessages.message.display ? 'invalid-input' : ''
-              }`}
-              onChange={handleChange}
-              value={formData.message.value}
-              name='message'
-              id='message'
-            />
+              <h6 className='contact-error-message'>
+                {errorMessages.title.display && errorMessages.title.message}
+              </h6>
+            </div>
+            <div className='input-group span-two'>
+              <label htmlFor='message'>Your message</label>
+              <textarea
+                className={`message ${
+                  errorMessages.message.display ? 'invalid-input' : ''
+                }`}
+                onChange={handleChange}
+                value={formData.message.value}
+                name='message'
+                id='message'
+              />
 
-            <h6 className='contact-error-message'>
-              {errorMessages.message.display && errorMessages.message.message}
-            </h6>
-          </div>
+              <h6 className='contact-error-message'>
+                {errorMessages.message.display && errorMessages.message.message}
+              </h6>
+            </div>
 
-          <button className='contact-button'>Post Comment</button>
-          {submitMessage.display && (
-            <h4
-              className='contact-submit-message'
-              style={{ color: submitMessage.color }}
-            >
-              {submitMessage.message}
-            </h4>
-          )}
-        </form>
-      </div>
-    </main>
+            <button className='contact-button'>Post Comment</button>
+            {submitMessage.display && (
+              <h4
+                className='contact-submit-message'
+                style={{ color: submitMessage.color }}
+              >
+                {submitMessage.message}
+              </h4>
+            )}
+          </form>
+        </div>
+      </main>
+    </>
   );
 }

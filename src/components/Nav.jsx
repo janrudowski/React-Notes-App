@@ -28,7 +28,7 @@ export default function Nav() {
         className={`hide-notes-button ${notesVisible ? '' : 'show-notes'}`}
         onClick={() => setNotesVisible(!notesVisible)}
       >
-        <img src='/images/chevron.svg' />
+        <img src='/images/chevron.svg' alt='chevron' />
       </button>
     </header>
   );

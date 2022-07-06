@@ -462,3 +462,139 @@ form {
 .hide-sidebar {
   display: none;
 }
+
+/* login page */
+
+.flex-login {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  align-items: center;
+}
+
+.login-section {
+  width: 50%;
+  height: 100%;
+}
+.login-section-image {
+  max-width: 100%;
+  height: auto;
+}
+.login-section.left {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ec7160;
+}
+
+.login-form-container {
+  width: 60%;
+  max-width: 450px;
+  height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-form-title {
+  width: 100%;
+  text-align: left;
+  font-size: 1.5rem;
+  margin-bottom: 0.5em;
+  margin-left: 0.2em;
+}
+
+.login-form-desc {
+  color: #8692a6;
+  font-size: 1rem;
+  font-weight: 400;
+}
+.login-form-social-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.login-form-social-buttons button {
+  border: 1px solid #524c4c61;
+  background: #fff;
+  border-radius: 5px;
+  padding: 1em 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  margin: 2em 0.25em;
+  color: #222;
+  cursor: pointer;
+  width: 45%;
+}
+.login-form-social-buttons button img {
+  margin-right: 0.5em;
+  width: 1rem;
+}
+
+.login-form-divide {
+  width: 100%;
+  text-align: center;
+  border: none;
+  border-top: 1px solid #524c4c61;
+  border-bottom: 1px solid #f5f5f5;
+  margin-bottom: 1em;
+}
+.login-form-divide legend {
+  padding: 0 1em;
+  letter-spacing: 0.2em;
+  color: #524c4c;
+  font-size: 0.8rem;
+}
+
+.login-form-input-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 1em;
+  color: #696f79;
+  font-size: 0.75rem;
+}
+
+.login-form-input-group label {
+  margin-bottom: 0.5em;
+}
+
+.login-form-input-group input {
+  padding: 1em 0.5em;
+  border: 1px solid #8692a6;
+  border-radius: 5px;
+  outline: none;
+  margin-bottom: 0.5em;
+}
+
+.login-form-submit {
+  background: #ec7160;
+  border-radius: 5px;
+  border: none;
+  color: #fff;
+  width: 100%;
+  padding: 1em 0;
+  margin: 2em 0;
+  cursor: pointer;
+}
+
+.login-form-footer {
+  color: #696f79;
+  font-weight: 500;
+}
+
+.login-form-link {
+  text-decoration: none;
+  color: #ec7160;
+}
+
+.login-form-error-message {
+  color: #dc3545;
+  font-weight: 500;
+  font-size: 0.7rem;
+}

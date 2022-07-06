@@ -2,6 +2,7 @@ import React from 'react';
 import Split from 'react-split';
 import Editor from './Editor';
 import Sidebar from './Sidebar';
+import Nav from './Nav';
 import { nanoid } from '../utils/generateId';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
@@ -104,12 +105,6 @@ export default function Notes() {
     localStorage.setItem('notes', JSON.stringify(notes.items));
   }, [notes]);
 
-  // React.useEffect(() => {
-  //   if (notes.items.length == 0) return;
-  //   const currentNote = notes.items.find((el) => el.id === notes.current);
-  //   navigation(`/notes/${currentNote.slug}`);
-  // }, [notes.current]);
-
   const params = useParams();
 
   React.useEffect(() => {
@@ -127,19 +122,23 @@ export default function Notes() {
         payload: params.note,
       });
     } else return;
+    // eslint-disable-next-line
   }, [params]);
 
   return (
-    <main>
-      <Split
-        className='split'
-        sizes={[20, 80]}
-        cursor='col-resize'
-        gutterSize={2}
-      >
-        <Sidebar dispatch={dispatch} notes={notes} />
-        <Editor notes={notes} dispatch={dispatch} />
-      </Split>
-    </main>
+    <>
+      <Nav />
+      <main>
+        <Split
+          className='split'
+          sizes={[20, 80]}
+          cursor='col-resize'
+          gutterSize={2}
+        >
+          <Sidebar dispatch={dispatch} notes={notes} />
+          <Editor notes={notes} dispatch={dispatch} />
+        </Split>
+      </main>
+    </>
   );
 }

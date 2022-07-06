@@ -1,10 +1,10 @@
 import React from 'react';
 import { ACTIONS } from './Notes';
 import { formatDate } from './Notes';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { NavContext } from './Context';
 export default function Sidebar({ dispatch, notes }) {
-  const { notesVisible, setNotesVisible } = React.useContext(NavContext);
+  const { notesVisible } = React.useContext(NavContext);
   const navigation = useNavigate();
   function handleDelete(e, id) {
     e.stopPropagation();
@@ -14,10 +14,7 @@ export default function Sidebar({ dispatch, notes }) {
     return (
       <div
         key={note.id}
-        onClick={() =>
-          // dispatch({ type: ACTIONS.CHANGE_SELECTED_NOTE, payload: note })
-          navigation(`/notes/${note.id}`)
-        }
+        onClick={() => navigation(`/notes/${note.id}`)}
         className={`sidebar-note ${
           notes.current === note.id ? 'sidebar-note-active' : ''
         }`}

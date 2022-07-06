@@ -63,6 +63,11 @@ export default function Editor({ notes, dispatch }) {
               toolbar: 'editor-tab',
               preview: 'editor-preview',
             }}
+            childProps={{
+              textArea: {
+                onBlur: () => console.log('blur'),
+              },
+            }}
           />
         </>
       )}

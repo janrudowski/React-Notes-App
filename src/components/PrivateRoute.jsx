@@ -7,3 +7,4 @@ export default function PrivateRoute({ children, loginPage = false }) {
   if (loginPage) return currentUser ? <Navigate to='/' /> : children;
   else return currentUser ? children : <Navigate to='/login' />;
 }
+//if route is a login/signup page render login page when user is not defined if is defined navigate to home page '/'

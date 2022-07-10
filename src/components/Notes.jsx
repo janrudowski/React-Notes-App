@@ -17,7 +17,9 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  where,
 } from 'firebase/firestore';
+import { useAuth } from './AuthContext';
 
 export const ACTIONS = {
   SET_NOTES: 'set-notes',
@@ -26,15 +28,6 @@ export const ACTIONS = {
   CHANGE_SELECTED_NOTE: 'change-note',
   DELETE_NOTE: 'delete-note',
 };
-
-/*
-
-//TODO: SET DB FETCH TO ONLY EXECUTE IF LOCALSTORAGE IS EMPTY THEN USE LOCALSTORAGE LIKE BEFORE (useEffect setLocalstorageitem [notes] each time notes change )
-//TODO: WHEN CREATING NOTES ADD TO STATE AND ADD TO DB 
-//TODO: UPDATE ON BLUR 
-//TODO: DELETE FROM DB AND FROM STATE
-//TODO: 1) CHECK IF LOCAL STORAGE IF LOCAL STORAGE LOAD IT INTO STATE (check init) ELSE LOAD FROM DB IF DB ROWS EXIST LOAD INTO STATE (automaticly will load into localstorage) IF DB NOT EMPTY (create new note)
-*/
 
 export function formatDate(seconds) {
   const date = new Date(seconds * 1000);
@@ -68,6 +61,7 @@ function reducer(state, { type, payload }) {
         id: nanoid(),
         body: 'Start typing',
         time: { seconds: Date.now() / 1000 },
+        user: payload.currentUser.uid,
       };
 
       const title = getTitle(newNote.body);
@@ -132,10 +126,17 @@ export default function Notes() {
   const navigation = useNavigate();
   const params = useParams();
 
+  //auth
+  const { currentUser } = useAuth();
+
   //get notes
   async function getNotesFromDB() {
     const colRef = collection(db, 'notes');
-    const q = query(colRef, orderBy('time', 'desc'));
+    const q = query(
+      colRef,
+      where('user', '==', currentUser.uid),
+      orderBy('time', 'desc')
+    );
     const snapshot = await getDocs(q);
     const items = snapshot.docs.map((doc) => {
       return { id: doc.id, ...doc.data() };

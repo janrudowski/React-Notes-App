@@ -3,9 +3,11 @@ import { ACTIONS } from './Notes';
 import { formatDate } from './Notes';
 import { useNavigate } from 'react-router-dom';
 import { useNavContext } from './NavContext';
+import { useAuth } from './AuthContext';
 export default function Sidebar({ dispatch, notes }) {
   const { notesVisible } = useNavContext();
   const navigation = useNavigate();
+  const { currentUser } = useAuth();
   function handleDelete(e, id) {
     e.stopPropagation();
     dispatch({ type: ACTIONS.DELETE_NOTE, payload: { id: id } });
@@ -52,7 +54,7 @@ export default function Sidebar({ dispatch, notes }) {
             onClick={() => {
               dispatch({
                 type: ACTIONS.CREATE_NOTE,
-                payload: { navigation: navigation },
+                payload: { navigation: navigation, currentUser: currentUser },
               });
             }}
             className='sidebar-button'

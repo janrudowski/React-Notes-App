@@ -1,84 +1,60 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
 export default function Signup() {
   const navigation = useNavigate();
+  const { signup } = useAuth();
+  const [loading, setLoading] = React.useState(false);
   const [formData, setFormData] = React.useState({
-    email: {
-      value: '',
-      //eslint-disable-next-line
-      regex: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-      active: false,
-    },
-    password: {
-      value: '',
-      active: false,
-    },
-  });
-  const [errorMessage, setErrorMessage] = React.useState({
-    email: {
-      message: 'Invalid email',
-      display: null,
-    },
-    password: {
-      message:
-        'Password cannot be empty and must be at least 8 characters long',
-      display: null,
-    },
+    email: '',
+    password: '',
   });
 
+  const [errorMessage, setErrorMessage] = React.useState({
+    email: '',
+    password: '',
+    submit: '',
+  });
+
+  async function handleSubmit() {
+    const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(
+      formData.email
+    );
+    const isValidPassword = formData.password.length >= 8;
+    setErrorMessage((prev) => {
+      return {
+        ...prev,
+        email: !isValidEmail ? 'Email not valid' : '',
+        password: !isValidPassword
+          ? 'Password must be longer than 8 characters'
+          : '',
+      };
+    });
+    if (!isValidEmail || !isValidPassword) return;
+    try {
+      setLoading(true); //so when user clicks during loging nothing will happen
+      await signup(formData.email, formData.password);
+      navigation('/');
+    } catch {
+      setErrorMessage((prev) => {
+        return {
+          ...prev,
+          submit: 'Failed to create an account.',
+        };
+      });
+    }
+    setLoading(false);
+  }
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData((prev) => {
       return {
         ...prev,
-        [name]: {
-          ...prev[name],
-          value: value,
-          active: true,
-        },
+        [name]: value,
       };
     });
   }
-
-  function handleSubmit() {
-    const dataCorrect = Object.values(errorMessage).every(
-      (el) => el.display == false
-    );
-    if (
-      dataCorrect &&
-      formData.email.value !== '' &&
-      formData.password.value !== ''
-    ) {
-      navigation('/', { replace: true });
-    }
-  }
-
-  React.useEffect(() => {
-    const formDataEntries = Object.entries(formData);
-    formDataEntries.forEach(([key, { value, regex, active }]) => {
-      if (!active) return;
-
-      let valid;
-
-      if (!regex) {
-        valid = value.length > 0;
-        if (key === 'password') valid = value.length >= 8;
-      } else {
-        valid = regex.test(value);
-      }
-
-      setErrorMessage((prev) => {
-        return {
-          ...prev,
-          [key]: {
-            ...prev[key],
-            display: !valid,
-          },
-        };
-      });
-    });
-  }, [formData]);
 
   return (
     <div className='flex-login'>
@@ -112,32 +88,36 @@ export default function Signup() {
           <div className='login-form-input-group'>
             <label htmlFor='email'>Email address</label>
             <input
-              className={errorMessage.email.display ? 'invalid-input' : ''}
+              className={errorMessage.email ? 'invalid-input' : ''}
               type='email'
               name='email'
-              value={formData.email.value}
+              value={formData.email}
               onChange={handleChange}
             />
-            <h5 className='login-form-error-message'>
-              {errorMessage.email.display && errorMessage.email.message}
-            </h5>
+            <h5 className='login-form-error-message'>{errorMessage.email}</h5>
           </div>
           <div className='login-form-input-group'>
             <label htmlFor='password'>Password</label>
             <input
-              className={errorMessage.password.display ? 'invalid-input' : ''}
+              className={errorMessage.password ? 'invalid-input' : ''}
               type='password'
               name='password'
-              value={formData.password.value}
+              value={formData.password}
               onChange={handleChange}
             />
             <h5 className='login-form-error-message'>
-              {errorMessage.password.display && errorMessage.password.message}
+              {errorMessage.password}
             </h5>
           </div>
-          <button onClick={handleSubmit} className='login-form-submit'>
+          <h4 className='login-form-error-submit'>{errorMessage.submit}</h4>
+          <button
+            disabled={loading}
+            onClick={handleSubmit}
+            className='login-form-submit'
+          >
             Sign up
           </button>
+
           <h4 className='login-form-footer'>
             Already have an account?
             <Link className='login-form-link' to='/login'>

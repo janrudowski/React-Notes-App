@@ -2,26 +2,33 @@ import React from 'react';
 import { ACTIONS } from './Notes';
 import { formatDate } from './Notes';
 import { useNavigate } from 'react-router-dom';
-import { NavContext } from './Context';
+import { useNavContext } from './NavContext';
 export default function Sidebar({ dispatch, notes }) {
-  const { notesVisible } = React.useContext(NavContext);
+  const { notesVisible } = useNavContext();
   const navigation = useNavigate();
   function handleDelete(e, id) {
     e.stopPropagation();
-    dispatch({ type: ACTIONS.DELETE_NOTE, payload: id });
+    dispatch({ type: ACTIONS.DELETE_NOTE, payload: { id: id } });
   }
+
   const noteElements = notes.items.map((note) => {
     return (
       <div
         key={note.id}
-        onClick={() => navigation(`/notes/${note.id}`)}
+        onClick={() => {
+          dispatch({
+            type: ACTIONS.CHANGE_SELECTED_NOTE,
+            payload: { id: note.id },
+          });
+          navigation(`/notes/${note.id}`);
+        }}
         className={`sidebar-note ${
           notes.current === note.id ? 'sidebar-note-active' : ''
         }`}
       >
         <h2 className='sidebar-note-title'>{note.title}</h2>
         <p className='sidebar-note-content'>{note.body.slice(0, 50)}</p>
-        <div className='sidebar-note-time'>{formatDate(note.time)}</div>
+        <div className='sidebar-note-time'>{formatDate(note.time.seconds)}</div>
         <div
           onClick={(e) => {
             handleDelete(e, note.id);
@@ -43,7 +50,10 @@ export default function Sidebar({ dispatch, notes }) {
         <div className='sidebar-button-container'>
           <button
             onClick={() => {
-              dispatch({ type: ACTIONS.CREATE_NOTE, payload: navigation });
+              dispatch({
+                type: ACTIONS.CREATE_NOTE,
+                payload: { navigation: navigation },
+              });
             }}
             className='sidebar-button'
           >

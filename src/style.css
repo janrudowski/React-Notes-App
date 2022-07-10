@@ -330,6 +330,38 @@ form {
 .editor-button-active:hover {
   background: #fd8271;
 }
+
+.editor-button-save {
+  margin: 0.25em;
+  font-weight: 700;
+  font-size: 0.775rem;
+  border: none;
+  color: #fff;
+  background: #fd827282;
+  border-radius: 3px;
+  width: 6.5em;
+  padding: 0.3em 1em;
+}
+.editor-button-save-active {
+  margin: 0.25em;
+  font-weight: 700;
+  font-size: 0.775rem;
+  border: none;
+  color: #fff;
+  background: #ec7160;
+  border-radius: 3px;
+  width: 6.5em;
+  padding: 0.3em 1em;
+  cursor: pointer;
+}
+.editor-button-save-active:hover {
+  background: #fd8271;
+}
+.editor-button-save-active img {
+  height: 0.775rem;
+  width: auto;
+}
+
 .editor-textarea {
   resize: none !important;
   outline: none;
@@ -426,6 +458,7 @@ form {
   color: #898989;
   margin-bottom: 0.5em;
   max-width: 90%;
+  word-wrap: break-word;
 }
 
 .sidebar-note-time {
@@ -597,4 +630,10 @@ form {
   color: #dc3545;
   font-weight: 500;
   font-size: 0.7rem;
+}
+
+.login-form-error-submit {
+  color: #dc3545;
+  font-weight: 500;
+  font-size: 1rem;
 }

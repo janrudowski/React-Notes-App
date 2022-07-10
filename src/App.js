@@ -6,25 +6,63 @@ import Notes from './components/Notes';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import InvalidRoute from './components/InvalidRoute';
-
-import { NavContext } from './components/Context';
+import PrivateRoute from './components/PrivateRoute';
+import { ContextProvider } from './components/NavContext';
+import { AuthContextProvider } from './components/AuthContext';
 export default function App() {
-  const [notesVisible, setNotesVisible] = React.useState(true);
-
   return (
     <div className='flex'>
-      <NavContext.Provider value={{ notesVisible, setNotesVisible }}>
-        <Routes>
-          <Route index path='/' element={<Home />} />
-          <Route path='/contact' element={<Contact />} />
-          <Route path='/notes' element={<Notes />}>
-            <Route path=':note' element={<Notes />} />
-          </Route>
-          <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={<Signup />} />
-          <Route path='*' element={<InvalidRoute />} />
-        </Routes>
-      </NavContext.Provider>
+      <AuthContextProvider>
+        <ContextProvider>
+          {/* ^^for navbar^^ */}
+          <Routes>
+            <Route
+              index
+              path='/'
+              element={
+                <PrivateRoute>
+                  <Home />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path='/contact'
+              element={
+                <PrivateRoute>
+                  <Contact />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path='/notes'
+              element={
+                <PrivateRoute>
+                  <Notes />
+                </PrivateRoute>
+              }
+            >
+              <Route path=':note' element={<Notes />} />
+            </Route>
+            <Route
+              path='/login'
+              element={
+                <PrivateRoute loginPage={true}>
+                  <Login />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path='/signup'
+              element={
+                <PrivateRoute loginPage={true}>
+                  <Signup />
+                </PrivateRoute>
+              }
+            />
+            <Route path='*' element={<InvalidRoute />} />
+          </Routes>
+        </ContextProvider>
+      </AuthContextProvider>
     </div>
   );
 }

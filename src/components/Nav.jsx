@@ -1,9 +1,19 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { NavContext } from './Context';
-
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavContext } from './NavContext';
+import { useAuth } from './AuthContext';
 export default function Nav() {
-  const { notesVisible, setNotesVisible } = React.useContext(NavContext);
+  const { notesVisible, setNotesVisible } = useNavContext();
+  const { logout } = useAuth();
+  const navigation = useNavigate();
+  async function handleLogout() {
+    try {
+      await logout();
+      navigation('/login');
+    } catch (err) {
+      console.log(err); //TODO: ADD PROPER ERROR HANDLING
+    }
+  }
   return (
     <header>
       <div className='flex-header'>
@@ -20,6 +30,11 @@ export default function Nav() {
             </li>
             <li>
               <NavLink to='/contact'>Contact</NavLink>
+            </li>
+            <li>
+              <a style={{ cursor: 'pointer' }} onClick={handleLogout}>
+                Log out
+              </a>
             </li>
           </ul>
         </nav>

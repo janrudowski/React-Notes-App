@@ -7,15 +7,37 @@ import { nanoid } from '../utils/generateId';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
+import { db } from '../config';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+} from 'firebase/firestore';
+
 export const ACTIONS = {
+  SET_NOTES: 'set-notes',
   CREATE_NOTE: 'create-note',
   UPDATE_NOTE: 'update-note',
   CHANGE_SELECTED_NOTE: 'change-note',
   DELETE_NOTE: 'delete-note',
 };
 
-export function formatDate(timestamp) {
-  const date = new Date(timestamp);
+/*
+
+//TODO: SET DB FETCH TO ONLY EXECUTE IF LOCALSTORAGE IS EMPTY THEN USE LOCALSTORAGE LIKE BEFORE (useEffect setLocalstorageitem [notes] each time notes change )
+//TODO: WHEN CREATING NOTES ADD TO STATE AND ADD TO DB 
+//TODO: UPDATE ON BLUR 
+//TODO: DELETE FROM DB AND FROM STATE
+//TODO: 1) CHECK IF LOCAL STORAGE IF LOCAL STORAGE LOAD IT INTO STATE (check init) ELSE LOAD FROM DB IF DB ROWS EXIST LOAD INTO STATE (automaticly will load into localstorage) IF DB NOT EMPTY (create new note)
+*/
+
+export function formatDate(seconds) {
+  const date = new Date(seconds * 1000);
   const options = {
     hour: 'numeric',
     minute: 'numeric',
@@ -30,36 +52,44 @@ function getTitle(str) {
   return str.split('\n')[0].slice(0, 30);
 }
 
-function getSlug(title, id) {
-  let newTitle = title
-    .trim()
-    .replace(/[^a-zA-Z ]/g, '') //replace empty spaces and special characters
-    .replace(/\s+/g, '-')
-    .toLowerCase();
-  return `${newTitle}-${id}`;
-}
-
 function reducer(state, { type, payload }) {
   switch (type) {
+    case ACTIONS.SET_NOTES:
+      const { items, current, navigation } = payload;
+      navigation(current);
+      return {
+        ...state,
+        items: items,
+        current: current,
+      };
+
     case ACTIONS.CREATE_NOTE:
       let newNote = {
         id: nanoid(),
         body: 'Start typing',
-        time: Date.now(),
+        time: { seconds: Date.now() / 1000 },
       };
+
       const title = getTitle(newNote.body);
-      const slug = getSlug(title, newNote.id);
+
       newNote = {
         ...newNote,
         title: title,
-        slug: slug,
       };
-      payload(`/notes/${newNote.id}`);
+
+      setDoc(doc(db, 'notes', newNote.id), {
+        ...newNote,
+        time: serverTimestamp(),
+      });
+
+      payload.navigation(newNote.id);
+
       return {
         ...state,
         items: [newNote, ...state.items],
         current: newNote.id,
       };
+
     case ACTIONS.UPDATE_NOTE:
       let newTitle = getTitle(payload);
       let updatedItems = state.items.map((note) =>
@@ -68,62 +98,65 @@ function reducer(state, { type, payload }) {
               ...note,
               body: payload,
               title: newTitle,
-              slug: getSlug(newTitle, note.id),
-              time: Date.now(),
+              time: { seconds: Date.now() / 1000 },
             }
           : note
       );
-      let sortedItems = [...updatedItems].sort((a, z) => z.time - a.time);
+      let sortedItems = [...updatedItems].sort(
+        (a, z) => z.time.seconds - a.time.seconds
+      );
       return {
         ...state,
         items: sortedItems,
       };
+
     case ACTIONS.CHANGE_SELECTED_NOTE:
       return {
         ...state,
-        current: payload,
+        current: payload.id,
       };
+
     case ACTIONS.DELETE_NOTE:
+      deleteDoc(doc(db, 'notes', payload.id));
       return {
         ...state,
-        items: state.items.filter((el) => el.id !== payload),
+        items: state.items.filter((el) => el.id !== payload.id),
       };
     default:
       return new Error('Invalid action');
   }
 }
 
-function init() {
-  let items = JSON.parse(localStorage.getItem('notes'));
-  return { items: items || [], current: items[0]?.id || null };
-}
-
 export default function Notes() {
+  //navigation
   const navigation = useNavigate();
-  const [notes, dispatch] = React.useReducer(reducer, {}, init);
-  React.useEffect(() => {
-    localStorage.setItem('notes', JSON.stringify(notes.items));
-  }, [notes]);
-
   const params = useParams();
 
+  //get notes
+  async function getNotesFromDB() {
+    const colRef = collection(db, 'notes');
+    const q = query(colRef, orderBy('time', 'desc'));
+    const snapshot = await getDocs(q);
+    const items = snapshot.docs.map((doc) => {
+      return { id: doc.id, ...doc.data() };
+    });
+    let current = params.note ? params.note : items[0].id;
+    dispatch({
+      type: ACTIONS.SET_NOTES,
+      payload: { items: items, current: current, navigation: navigation },
+    });
+  }
+
+  // state
+  const [notes, dispatch] = React.useReducer(reducer, {
+    items: [],
+    current: null,
+  });
+
+  //runs only once
   React.useEffect(() => {
-    if (
-      Object.keys(params).length === 0 &&
-      params.constructor === Object &&
-      notes.items.length !== 0
-    ) {
-      //checks if we just navigated to /notes and if notes exist navigates to the first one
-      const firstNote = notes.items[0];
-      navigation(`/notes/${firstNote?.id}`);
-    } else if (params.note) {
-      dispatch({
-        type: ACTIONS.CHANGE_SELECTED_NOTE,
-        payload: params.note,
-      });
-    } else return;
-    // eslint-disable-next-line
-  }, [params]);
+    getNotesFromDB();
+  }, []);
 
   return (
     <>
@@ -131,7 +164,7 @@ export default function Notes() {
       <main>
         <Split
           className='split'
-          sizes={[20, 80]}
+          sizes={[20, 80]} //TODO: FIX SIZE WHEN SIDEBAR HIDDEN
           cursor='col-resize'
           gutterSize={2}
         >

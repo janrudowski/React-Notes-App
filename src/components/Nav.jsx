@@ -11,7 +11,7 @@ export default function Nav() {
       await logout();
       navigation('/login');
     } catch (err) {
-      console.log(err); //TODO: ADD PROPER ERROR HANDLING
+      alert(err);
     }
   }
   return (

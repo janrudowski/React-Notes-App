@@ -6,6 +6,7 @@ import Nav from './Nav';
 import { nanoid } from '../utils/generateId';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import { useNavContext } from './NavContext';
 
 import { db } from '../config';
 import {
@@ -115,6 +116,7 @@ function reducer(state, { type, payload }) {
       return {
         ...state,
         items: state.items.filter((el) => el.id !== payload.id),
+        current: state.items[0].id || null,
       };
     default:
       return new Error('Invalid action');
@@ -128,6 +130,7 @@ export default function Notes() {
 
   //auth
   const { currentUser } = useAuth();
+  const { notesVisible } = useNavContext();
 
   //get notes
   async function getNotesFromDB() {
@@ -165,7 +168,7 @@ export default function Notes() {
       <main>
         <Split
           className='split'
-          sizes={[20, 80]} //TODO: FIX SIZE WHEN SIDEBAR HIDDEN
+          sizes={notesVisible ? [20, 80] : [0, 120]}
           cursor='col-resize'
           gutterSize={2}
         >
